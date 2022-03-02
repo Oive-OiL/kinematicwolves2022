@@ -3,7 +3,6 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.DifferentialDrivetrain;
-import frc.robot.subsystems.ShooterSubsystem;
 
 public class BackwordsAuton extends CommandBase {
   /**
@@ -16,7 +15,6 @@ public class BackwordsAuton extends CommandBase {
     // Use addRequirements() here to declare subsystem dependencies.
     this.drivetrain = drivetrain;
     addRequirements(drivetrain);
-
   }
 
   // Called when the command is initially scheduled.
@@ -27,8 +25,8 @@ public class BackwordsAuton extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    drivetrain.moveBackward(-1 * Constants.AUTON_SPEED);
-     timer += 10;
+    drivetrain.moveBackward(1 * Constants.AUTON_SPEED);
+    timer += 20;
   }
 
   // Called once the command ends or is interrupted.
