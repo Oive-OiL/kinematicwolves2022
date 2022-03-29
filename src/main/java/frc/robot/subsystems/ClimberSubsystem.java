@@ -19,8 +19,8 @@ import frc.robot.Constants;
 
 public class ClimberSubsystem extends SubsystemBase {
   private final WPI_TalonFX m_climberMotor1 = new WPI_TalonFX(Constants.CLIMBER_MOTOR1);
-  //private final WPI_TalonFX m_climberMotor2 = new WPI_TalonFX(Constants.CLIMBER_MOTOR2);
-  public static Servo angleActuator_1 = new Servo(Constants.LINEAR_ACTUATOR_1); // PWM controlled
+  private final WPI_TalonFX m_climberMotor2 = new WPI_TalonFX(Constants.CLIMBER_MOTOR2);
+  public static Servo angleActuator = new Servo(Constants.LINEAR_ACTUATOR); // PWM controlled
   private final int encoderCountsPerRev = 2048;
   private boolean climber1BrakeOn = false;
   private double maxServoExtention = 0.1; // meters
@@ -38,6 +38,28 @@ public class ClimberSubsystem extends SubsystemBase {
     m_climberMotor1.configIntegratedSensorInitializationStrategy(SensorInitializationStrategy.BootToZero, 10);
   }
 
+  public void setLinearActuatorPosition(double m_linearActuator){
+    // Check to make sure position is not out of bounds
+    m_linearActuator = clipLinearActuatorPositionCommand(m_linearActuator);
+    angleActuator.set(m_linearActuator);
+  }
+  
+  private double clipLinearActuatorPositionCommand(double position){
+    // Make sure command does not exceed the hardware limit
+    if (position > Constants.UPPER_SERVO_POS_LIMIT){
+      position = Constants.UPPER_SERVO_POS_LIMIT;
+    }
+
+    else if (position < Constants.LOWER_SERVO_POS_LIMIT){
+      position = Constants.LOWER_SERVO_POS_LIMIT;
+    }
+
+    return position;
+  }
+
+
+//public void setLinearActuatorPosition(LinearActuator m_linearActuator) {}
+  
   public void configureMotor1Feedback(){
     m_climberMotor1.configFactoryDefault();
 		m_climberMotor1.setNeutralMode(NeutralMode.Brake);
@@ -136,7 +158,7 @@ public class ClimberSubsystem extends SubsystemBase {
   public boolean servoAtPosition(double endRawPosition){
     // This moves so slow that PID control is not necessary
     // Position is a value between 0 and 1
-    double currentRawPosition = angleActuator_1.getPosition();
+    double currentRawPosition = angleActuator.getPosition();
     double error = Math.abs(currentRawPosition - endRawPosition);
 
     return (error < 0.02);
@@ -154,5 +176,17 @@ public class ClimberSubsystem extends SubsystemBase {
 
   public void setClimberMotor1Output(double commandedOutput){
     m_climberMotor1.set(commandedOutput);
+  }
+
+  public void setClimberMotor2Output (double commandedOutput){
+    m_climberMotor2.set(commandedOutput);
+  }
+
+  public boolean servo_at_position(double endPosition){
+    double actuator_1_position = angleActuator.getPosition();
+
+    double actuator_1_position_delta = Math.abs(actuator_1_position - endPosition);
+
+    return ((actuator_1_position_delta) < 0.04);
   }
 }

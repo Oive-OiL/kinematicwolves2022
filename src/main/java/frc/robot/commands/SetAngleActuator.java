@@ -6,26 +6,32 @@ package frc.robot.commands;
 
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants;
 import frc.robot.subsystems.ClimberSubsystem;
 
-public class RunClimber1OpenLoop extends CommandBase {
+public class SetAngleActuator extends CommandBase {
 
-  private final ClimberSubsystem climber1;
+  private final ClimberSubsystem setAngleActuator;
   double commandedOutputFraction;
 
   /** Creates a new Climber2. */
-  public RunClimber1OpenLoop(ClimberSubsystem climberSubsystem, double commandedFraction) {
-    this.climber1 = climberSubsystem;
-    this.commandedOutputFraction = commandedFraction;
-    addRequirements(climber1);
+  public SetAngleActuator(ClimberSubsystem climberSubsystem) {
+    this.setAngleActuator = climberSubsystem;
+    addRequirements(setAngleActuator);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    climber1.setClimberMotor1Output(commandedOutputFraction);
+    if (setAngleActuator.servoAtPosition(Constants.LOWER_SERVO_POS_LIMIT)){
+      setAngleActuator.servoAtPosition(0.4);
+    }
+    else{
+      setAngleActuator.servoAtPosition(Constants.LOWER_SERVO_POS_LIMIT);
+    }
   }
+
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -33,9 +39,8 @@ public class RunClimber1OpenLoop extends CommandBase {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-    climber1.setClimberMotor1Output(0);
-  }
+  public void end(boolean interrupted) {}
+  
 
   // Returns true when the command should end.
   @Override
